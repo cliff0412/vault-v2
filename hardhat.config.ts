@@ -57,12 +57,20 @@ task("lint:collisions", "Checks all contracts for function signatures collisions
 
 function nodeUrl(network: any) {
   let infuraKey
+  let alchemyKey
   try {
     infuraKey = fs.readFileSync(path.resolve(__dirname, '.infuraKey')).toString().trim()
-  } catch(e) {
+  } catch (e) {
     infuraKey = ''
   }
-  return `https://${network}.infura.io/v3/${infuraKey}`
+  try {
+    alchemyKey = fs.readFileSync(path.resolve(__dirname, '.alchemyKey')).toString().trim()
+  } catch (e) {
+    alchemyKey = ''
+  }
+  // return `https://${network}.infura.io/v3/${infuraKey}`
+  return `https://eth-${network}.alchemyapi.io/v2/${alchemyKey}`
+
 }
 
 let mnemonic = process.env.MNEMONIC
@@ -140,6 +148,12 @@ module.exports = {
     mainnet: {
       accounts,
       url: nodeUrl('mainnet')
+    },
+    hardhat: {
+      accounts,
+      forking: {
+        url: nodeUrl('mainnet')
+      },
     },
     coverage: {
       url: 'http://127.0.0.1:8555',
