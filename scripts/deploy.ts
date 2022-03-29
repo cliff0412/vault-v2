@@ -41,10 +41,11 @@ async function main() {
 
     const userPrivateKey = ethers.Wallet.fromMnemonic(mnemonic, "m/44'/60'/0'/0/0").privateKey;
 
-    const baseId = DAI; //ethers.utils.hexlify(ethers.utils.randomBytes(6))
-    const ilkId = ETH; //ethers.utils.hexlify(ethers.utils.randomBytes(6))
+    const baseId = DAI; // base
+    const ilkId = ETH;  // collatoral
     const seriesId = ethers.utils.hexlify(ethers.utils.randomBytes(6))  // fyToken
 
+    // deploy protocol
     const env = await YieldEnvironment.setup(accounts[0], [baseId, ilkId], [seriesId])
     console.log("env initialized");
 
@@ -74,7 +75,9 @@ async function main() {
     // await spotSource.set(WAD.div(2500)) // ETH wei per DAI
 
     console.log("pouring");
-    await env.ladle.pour(vaultId, accounts[0].address, WAD, WAD)
+    await env.ladle.pour(vaultId, accounts[0].address, WAD, WAD) // Add collateral and borrow from vault, pull assets from and push borrowed asset to user
+    /// Or, repay to vault and remove collateral, pull borrowed asset from and push assets to user
+    /// Borrow only before maturity.
 
     console.log("poured");
 
